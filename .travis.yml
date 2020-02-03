@@ -1,8 +1,11 @@
+# docker require root privilege
 sudo: required
+
 # telling travis to install docker
 services:
   - docker
 
+# build the image
 before_install:
   - docker build -t chauyiu1994/docker-react -f Dockerfile.dev .
 
@@ -10,3 +13,24 @@ before_install:
 script:
   - docker run -e CI=true chauyiu1994/docker-react npm run test
 
+# deploy to elasticbeanstalk if test pass 
+deploy:
+  # edge: true
+  provider: elasticbeanstalk
+  # regions of aws registered
+  region: "us-east-2"
+  # name of elasticbeanstalk instance
+  app: "docker-react"
+  # env of elasticbeanstalk instance
+  env: "DockerReact-env"
+  # travis zip the contents can deploy to a S3 bucket (check at s3 service dashbash)
+  bucket_name: "elasticbeanstalk-us-east-2-873739410082"
+  bucket_path: "docker-react"
+  # deploy only when master branch got modified
+  on:
+    branch: master
+
+  # iam dashboard -> users -> add users -> Attach existing policies directly -> use AWSElasticBeanstalkFullAccess policy
+  # adding the access key in the travis ci env variable dashboard
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
