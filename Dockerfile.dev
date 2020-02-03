@@ -1,0 +1,11 @@
+FROM node:alpine
+
+WORKDIR '/app'
+
+COPY package.json .
+RUN npm install
+
+# can get rip pf this line because of volume, but keep it to be clearer or in case not using volume in the future
+COPY . .
+
+CMD ["npm", "run", "start"]
