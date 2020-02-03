@@ -1,0 +1,12 @@
+sudo: required
+# telling travis to install docker
+services:
+  - docker
+
+before_install:
+  - docker build -t chauyiu1994/docker-react -f Dockerfile.dev .
+
+# run script, (travis assume that build fail if any for the script return status rather than 0)
+script:
+  - docker run -e CI=true USERNAME/docker-react npm run test
+
